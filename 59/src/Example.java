@@ -12,7 +12,7 @@ public class Example {
             while(n>0)
             {
                 a[num][num]=nn;
-                if(n>1){
+                if(n>1){ 
 
                     for(i=num,j=num+1;j<num+n;j++)//上边横着
                         a[i][j]=a[num][num]+j-num;
