@@ -27,9 +27,32 @@ class Solution {
         return max_sum;
     }
 
+    public int maxSubArray2(int[] nums) {
+        // 分析遍历数组的情况。维持一个连续的数组元素和。
+        // 如果该数组的和大于0,那么加上一个元素之后的值肯定大于这个元素的值。
+        // 也就是说，从后一个元素开始的子数组和加上前面的数组会更大。
+        // 但是，如果当前的数组和是负数，加上后肯定没有从后一个元素开始的子数组的和大。
+        int max = nums[0];
+        int sum = nums[0];
+        for(int i = 1; i < nums.length; i++){
+            if(sum < 0){
+                sum = nums[i];
+            }
+            else{
+
+                sum += nums[i];
+            }
+            if(sum > max){
+                max = sum;
+            }
+        }
+        return max;
+    }
+
     public static void main(String[] args) {
-        int[] arr = {-2,1,-3,4,-1,2,1,-5,4};
+//        int[] arr = {-2,1,-3,4,-1,2,1,-5,4};
+        int[] arr = {-2,1};
         Solution solution = new Solution();
-        System.out.println(solution.maxSubArray(arr));
+        System.out.println(solution.maxSubArray2(arr));
     }
 }
