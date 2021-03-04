@@ -1,52 +1,63 @@
-import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
-
 import java.util.Map;
-import java.util.Stack;
+import java.util.Set;
 import java.util.TreeMap;
 
-public class Solution {
+class Solution {
     public static void main(String[] args) {
         String str = "K4(ON(SO3)2)2";
         Solution solution = new Solution();
-        solution.countOfAtoms(str);
-
+        String s = solution.countOfAtoms(str);
+        System.out.println(s);
     }
+    int i;
     public String countOfAtoms(String formula) {
-        int N = formula.length();
-        Stack<Map<String, Integer>> stack = new Stack();
-        stack.push(new TreeMap());
-
-        for (int i = 0; i < N;) {
-            if (formula.charAt(i) == '(') {
-                stack.push(new TreeMap());
-                i++;
-            } else if (formula.charAt(i) == ')') {
-                Map<String, Integer> top = stack.pop();
-                int iStart = ++i, multiplicity = 1;
-                while (i < N && Character.isDigit(formula.charAt(i))) i++;
-                if (i > iStart) multiplicity = Integer.parseInt(formula.substring(iStart, i));
-                for (String c: top.keySet()) {
-                    int v = top.get(c);
-                    stack.peek().put(c, stack.peek().getOrDefault(c, 0) + v * multiplicity);
-                }
-            } else {
-                int iStart = i++;
-                while (i < N && Character.isLowerCase(formula.charAt(i))) i++;
-                String name = formula.substring(iStart, i);
-                iStart = i;
-                while (i < N && Character.isDigit(formula.charAt(i))) i++;
-                int multiplicity = i > iStart ? Integer.parseInt(formula.substring(iStart, i)) : 1;
-                stack.peek().put(name, stack.peek().getOrDefault(name, 0) + multiplicity);
-            }
-        }
-
         StringBuilder ans = new StringBuilder();
-        for (String name: stack.peek().keySet()) {
+        i = 0;
+        Map<String, Integer> count = parse(formula);
+        for (String name: count.keySet()) {
             ans.append(name);
-            int multiplicity = stack.peek().get(name);
-            if (multiplicity > 1) ans.append("" + multiplicity);
+            int multiplicity = count.get(name);
+            if (multiplicity > 1) {
+                ans.append("" + multiplicity);
+            }
         }
         return new String(ans);
     }
 
+    public Map<String, Integer> parse(String formula) {
+        int N = formula.length();
+        Map<String, Integer> count = new TreeMap();
+        while (i < N && formula.charAt(i) != ')') {
+            if (formula.charAt(i) == '(') {
+                i++;
+                Set<Map.Entry<String, Integer>> entries = parse(formula).entrySet();
+                for (Map.Entry<String, Integer> entry: entries) {
+                    count.put(entry.getKey(), count.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                }
+            } else {
+                int iStart = i++;
+                while (i < N && Character.isLowerCase(formula.charAt(i))) {
+                    i++;
+                }
+                String name = formula.substring(iStart, i);
+                iStart = i;
+                while (i < N && Character.isDigit(formula.charAt(i))){
+                    i++;
+                }
+                int multiplicity = iStart < i ? Integer.parseInt(formula.substring(iStart, i)) : 1;
+                count.put(name, count.getOrDefault(name, 0) + multiplicity);
+            }
+        }
+        int iStart = ++i;
+        while (i < N && Character.isDigit(formula.charAt(i))) {
+            i++;
+        }
+        if (iStart < i) {
+            int multiplicity = Integer.parseInt(formula.substring(iStart, i));
+            for (String key: count.keySet()) {
+                count.put(key, count.get(key) * multiplicity);
+            }
+        }
+        return count;
+    }
 }

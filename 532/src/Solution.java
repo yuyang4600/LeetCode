@@ -43,10 +43,6 @@ public class Solution {
         return count;
     }
 
-    public int findPairs3(int[] nums, int k) {
-
-    }
-
     public static void main(String[] args) {
         Solution solution = new Solution();
         int[] arr = {3,1,4,1,5};
